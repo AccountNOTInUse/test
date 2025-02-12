@@ -55,9 +55,9 @@ app.get('/status', (req, res) => {
 });
 
 // 404 handler - after all other routes
-app.get('*', (req, res) => {
-  res.status(404).sendFile(path.join(__dirname, 'src', 'views', '404.html')); // Ensure this path is correct
-});
+//app.get('*', (req, res) => {
+//  res.status(404).sendFile(path.join(__dirname, 'src', 'views', '404.html')); // Ensure this path is correct
+//});
 
 // Start the server
 app.listen(port, () => {
