@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Status Page</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+  <div class="max-w-4xl mx-auto py-12">
+    <h1 class="text-3xl font-bold mb-6">Ongoing Maintenance</h1>
+
+    <div class="bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+      <h2 class="text-lg font-semibold text-gray-300">STATUS</h2>
+
+      <div class="my-4">
+        <p class="flex justify-between">
+          <span>Website</span>
+          <span class="font-bold ${websiteStatus === 'Online' ? 'text-green-500' : 'text-red-500'}">
+            ${websiteStatus}
+          </span>
+        </p>
+        <div class="h-1 w-full bg-gray-700 rounded-full mt-2">
+          <div class="${websiteStatus === 'Online' ? 'bg-green-500' : 'bg-red-500'} h-1 rounded-full" style="width: ${websiteStatus === 'Online' ? '100%' : '0'};"></div>
+        </div>
+      </div>
+
+      <div class="my-4">
+        <p class="flex justify-between">
+          <span>Bot</span>
+          <span class="font-bold ${botStatus === 'Online' ? 'text-green-500' : 'text-red-500'}">
+            ${botStatus}
+          </span>
+        </p>
+        <div class="h-1 w-full bg-gray-700 rounded-full mt-2">
+          <div class="${botStatus === 'Online' ? 'bg-green-500' : 'bg-red-500'} h-1 rounded-full" style="width: ${botStatus === 'Online' ? '100%' : '0'};"></div>
+        </div>
+      </div>
+
+      <p class="text-sm text-gray-500 mt-4">Last Checked: ${lastChecked}</p>
+    </div>
+
+    <h2 class="text-xl font-semibold mb-4">Previous Incidents</h2>
+    <div class="bg-gray-800 p-6 rounded-lg shadow-md">
+      <p class="text-gray-300">Working on the bot</p>
+      <p class="text-gray-500 text-sm">Feb 11, 2025 - Maintenance ongoing</p>
+    </div>
+  </div>
+</body>
+</html>

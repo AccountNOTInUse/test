@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Status Page</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Loading Screen Style */
+    #loadingScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.7); /* Opaque black background */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    /* Circular Loader Style */
+    .loader {
+      border: 8px solid rgba(255, 255, 255, 0.2);
+      border-top: 8px solid #fff;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1.5s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Page Load Animation */
+    .page-content {
+      opacity: 0;
+      transform: translateY(50px);
+      animation: fadeIn 1s ease-out forwards 1s; /* Delayed animation */
+    }
+
+    .footer-content {
+      opacity: 0;
+      transform: translateY(50px);
+      animation: fadeIn 1s ease-out forwards 1.5s; /* Delayed animation */
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen pt-16">
+
+  <!-- Loading Screen with Circular Loader -->
+  <div id="loadingScreen">
+    <div class="loader"></div>
+  </div>
+
+  <!-- Main Content (will appear after loading screen) -->
+  <div class="page-content max-w-6xl mx-auto py-12">
+    <!-- Ongoing Maintenance Section (Bigger Banner) -->
+    <div class="bg-gray-800 p-8 rounded-lg shadow-md mb-8 text-center">
+      <h1 id="maintenanceMessage" class="text-4xl font-bold">🔧 Ongoing Maintenance</h1>
+    </div>
+
+    <!-- Status Section (Bigger Frame) -->
+    <div class="bg-gray-800 p-8 rounded-lg shadow-md">
+      <h2 class="text-lg font-semibold text-gray-300 mb-4">STATUS</h2>
+
+      <div class="my-4">
+        <p class="flex justify-between items-center">
+          <span>Website</span>
+          <span id="websiteStatus" class="font-bold">Unknown</span>
+        </p>
+        <div class="h-2 w-full bg-gray-700 rounded-full mt-2">
+          <div id="websiteStatusBar" class="bg-gray-500 h-2 rounded-full" style="width: 0;"></div>
+        </div>
+      </div>
+
+      <div class="my-4">
+        <p class="flex justify-between items-center">
+          <span>Bot</span>
+          <span id="botStatus" class="font-bold">Unknown</span>
+        </p>
+        <div class="h-2 w-full bg-gray-700 rounded-full mt-2">
+          <div id="botStatusBar" class="bg-gray-500 h-2 rounded-full" style="width: 0;"></div>
+        </div>
+      </div>
+
+      <p id="statusMessage" class="text-sm text-gray-500 mt-4">Last Checked: Not yet checked</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-center py-4 mt-12 footer-content">
+    <p class="text-gray-500">Copyright © Lighthouse | Mr. Speedy Development</p>
+  </footer>
+
+  <!-- Script to Handle Status Updates and Uptime -->
+  <script>
+    // Start time for uptime counter
+    const startTime = new Date();
+
+    // Function to format elapsed time
+    function formatUptime() {
+      const now = new Date();
+      const diff = now - startTime;
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      // Update the uptime display
+      document.getElementById('uptime').textContent = `${hours} hours ${minutes} minutes ${seconds} seconds`;
+    }
+
+    // Update uptime every second
+    setInterval(formatUptime, 1000);
+
+    // Example fetch to get status data
+    fetch('/status')
+      .then(response => response.json())
+      .then(data => {
+        // Update website status
+        const websiteStatusElement = document.getElementById('websiteStatus');
+        const websiteStatusBar = document.getElementById('websiteStatusBar');
+        websiteStatusElement.textContent = data.websiteStatus;
+        websiteStatusBar.style.width = data.websiteStatus === 'Online' ? '100%' : '0';
+        websiteStatusBar.className = data.websiteStatus === 'Online' ? 'bg-green-500' : 'bg-red-500';
+
+        // Update bot status
+        const botStatusElement = document.getElementById('botStatus');
+        const botStatusBar = document.getElementById('botStatusBar');
+        botStatusElement.textContent = data.botStatus;
+        botStatusBar.style.width = data.botStatus === 'Online' ? '100%' : '0';
+        botStatusBar.className = data.botStatus === 'Online' ? 'bg-green-500' : 'bg-red-500';
+
+        // Update last checked message
+        const lastCheckedElement = document.getElementById('statusMessage');
+        lastCheckedElement.textContent = 'Last Checked: ' + data.lastChecked;
+
+        // Debugging log to check data structure
+        console.log("Data received from server:", data);
+
+        // Ongoing Maintenance bar message update
+        const maintenanceMessage = document.getElementById('maintenanceMessage');
+        if (data.websiteStatus === 'Online' && data.botStatus === 'Online') {
+          maintenanceMessage.textContent = '✅ All systems working';
+          maintenanceMessage.classList.add('text-green-500');
+          maintenanceMessage.classList.remove('text-yellow-500', 'text-red-500');
+        } else if (data.websiteStatus === 'Offline' && data.botStatus === 'Offline') {
+          maintenanceMessage.textContent = '⚠️ All systems down';
+          maintenanceMessage.classList.add('text-red-500');
+          maintenanceMessage.classList.remove('text-yellow-500', 'text-green-500');
+        } else {
+          maintenanceMessage.textContent = '🔧 Not all systems are operational';
+          maintenanceMessage.classList.add('text-yellow-500');
+          maintenanceMessage.classList.remove('text-green-500', 'text-red-500');
+        }
+      })
+      .catch(error => console.error('Error fetching status:', error));
+
+    // Hide the loading screen after 3 seconds
+    setTimeout(() => {
+      document.getElementById('loadingScreen').style.display = 'none';
+      document.querySelector('.page-content').style.opacity = 1;
+      document.querySelector('.footer-content').style.opacity = 1;
+    }, 3000);
+  </script>
+</body>
+</html>

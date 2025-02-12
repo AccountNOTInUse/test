@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 Not Found</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Match the same background and animation as the index page */
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    #content {
+      animation: fadeIn 1s ease-in-out;
+    }
+    /* Customize loading screen */
+    #loadingScreen {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #1f2937; /* Match your preferred background color */
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 50;
+    }
+    /* Loader animation */
+    .loader {
+      border: 8px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top: 8px solid #fff;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col justify-center items-center">
+
+  <!-- Loading Screen -->
+  <div id="loadingScreen" class="fixed inset-0 flex justify-center items-center z-50">
+    <div class="loader"></div>
+  </div>
+
+  <!-- 404 Content (hidden initially) -->
+  <div id="content" class="hidden text-center px-4">
+    <h1 class="text-6xl font-bold text-red-500 mb-4">404</h1>
+    <h2 class="text-2xl font-semibold text-gray-200 mb-6">Oops! Page Not Found</h2>
+    <p class="text-lg text-gray-400 mb-8">The page you're looking for doesn't exist.</p>
+    <a href="/" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition">Go Back Home</a>
+  </div>
+
+  <!-- Footer -->
+  <footer class="text-center py-4">
+    <p class="text-gray-500">Copyright © Lighthouse | Mr. Speedy Development</p>
+  </footer>
+
+  <script>
+    window.onload = function() {
+      setTimeout(function() {
+        // Hide the loading screen and ensure it's removed from the layout
+        document.getElementById('loadingScreen').style.display = 'none'; 
+        // Show the 404 content
+        document.getElementById('content').classList.remove('hidden');
+      }, 2000); // Adjust delay as needed
+    };
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,58 @@
+const express = require('express');
+const axios = require('axios');
+const schedule = require('node-schedule');
+const path = require('path');
+
+const app = express();
+const port = 3000;
+
+// Set EJS as the templating engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// Serve static files (CSS, images)
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Your website URL to monitor
+const websiteURL = 'https://your-website.com';
+const botURL = 'https://your-bot.com';
+
+let websiteStatus = 'Unknown';
+let botStatus = 'Unknown';
+let lastChecked = 'Not yet checked';
+
+// Function to check the status of the website and bot
+async function checkWebsiteStatus() {
+  try {
+    const response = await axios.get(websiteURL);
+    websiteStatus = response.status === 200 ? 'Online' : 'Down';
+  } catch (error) {
+    websiteStatus = 'Down';
+  }
+  try {
+    const response = await axios.get(botURL);
+    botStatus = response.status === 200 ? 'Online' : 'Down';
+  } catch (error) {
+    botStatus = 'Down';
+  }
+  lastChecked = new Date().toLocaleString();
+}
+
+// Schedule the check to run every minute
+schedule.scheduleJob('*/1 * * * *', checkWebsiteStatus);
+
+// Serve the status page
+app.get('/', (req, res) => {
+  res.render('index', {
+    websiteURL,
+    websiteStatus,
+    botStatus,
+    lastChecked
+  });
+});
+
+// Start the server
+app.listen(port, () => {
+  console.log(`Status page is running at http://localhost:${port}`);
+  checkWebsiteStatus(); // Initial check on startup
+});
